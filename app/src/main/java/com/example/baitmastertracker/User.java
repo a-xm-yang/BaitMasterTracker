@@ -1,20 +1,18 @@
 package com.example.baitmastertracker;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 public class User {
 
     private String email;
     private String password;
     private String phoneNum;
     private String recoveryNum;
-
-    public User(){}
-
-    public User(String email, String password, String phoneNum, String recoveryNum) {
-        this.email = email;
-        this.password = password;
-        this.phoneNum = phoneNum;
-        this.recoveryNum = recoveryNum;
-    }
+    private HashMap<String, String> Img;
+    private HashMap<String, LocationTime> Location;
 
     public String getEmail() {
         return email;
@@ -46,5 +44,31 @@ public class User {
 
     public void setRecoveryNum(String recoveryNum) {
         this.recoveryNum = recoveryNum;
+    }
+
+    public HashMap<String, LocationTime> getLocation() {
+        return Location;
+    }
+
+    public void setLocation(HashMap<String, LocationTime> location) {
+        Location = location;
+    }
+
+    public HashMap<String, String> getImg() {
+        return Img;
+    }
+
+    public void setImg(HashMap<String, String> img) {
+        Img = img;
+    }
+
+    public List<String> getAllImageUrl(){
+        ArrayList<String> list = new ArrayList<>(Img.values());
+        return list;
+    }
+
+    public List<LocationTime> getAllLocationTime(){
+        ArrayList<LocationTime> list = new ArrayList<>(Location.values());
+        return list;
     }
 }

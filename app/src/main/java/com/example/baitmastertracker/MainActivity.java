@@ -3,8 +3,13 @@ package com.example.baitmastertracker;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.view.WindowManager;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -38,24 +43,42 @@ public class MainActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance().getReference();
         mStorageRef = FirebaseStorage.getInstance().getReference();
-        image = (ImageView)findViewById(R.id.imageView);
-        Glide.with(this).load("").into(image);
+    }
 
+    public void login(View view) {
+        EditText usernameField = findViewById(R.id.username);
+        EditText passwordField = findViewById(R.id.password);
+        email = usernameField.getText().toString();
+        password = passwordField.getText().toString();
+
+        showLoading();
         login();
+    }
 
+    private void showLoading(){
+        ProgressBar bar = findViewById(R.id.loginProgressBar);
+        bar.setVisibility(View.VISIBLE);
+    }
 
+    private void finishLoading(){
+        ProgressBar bar = findViewById(R.id.loginProgressBar);
+        bar.setVisibility(View.GONE);
+    }
+
+    public void displayErrorMessage(String message) {
+        EditText passwordField = findViewById(R.id.password);
+        passwordField.setError(message);
+        finishLoading();
     }
 
     private void login(){
-        mAuth.signInWithEmailAndPassword("nicholas@seniow.com", "Abc$123")
+        mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
+                        finishLoading();
                         if (task.isSuccessful()) {
-
-
                             System.out.println(mAuth.getUid());
-
                             mDatabase.child("Peeps").child(mAuth.getUid()).addValueEventListener(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -64,16 +87,15 @@ public class MainActivity extends AppCompatActivity {
                                     System.out.println(mAuth.getUid());
 
                                     StorageReference riversRef = mStorageRef.child(mAuth.getUid());
-
-
-
                                 }
 
                                 @Override
                                 public void onCancelled(@NonNull DatabaseError databaseError) {
-
+                                    displayErrorMessage("Connection Error");
                                 }
                             });
+                        } else{
+                            displayErrorMessage("Incorrect Username or Password");
                         }
                     }
                 });
