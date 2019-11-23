@@ -32,17 +32,12 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private String email;
     private String password;
-    private DatabaseReference mDatabase;
-    private User user;
-    private StorageReference mStorageRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mAuth = FirebaseAuth.getInstance();
-        mDatabase = FirebaseDatabase.getInstance().getReference();
-        mStorageRef = FirebaseStorage.getInstance().getReference();
     }
 
     public void login(View view) {
@@ -55,12 +50,12 @@ public class MainActivity extends AppCompatActivity {
         login();
     }
 
-    private void showLoading(){
+    private void showLoading() {
         ProgressBar bar = findViewById(R.id.loginProgressBar);
         bar.setVisibility(View.VISIBLE);
     }
 
-    private void finishLoading(){
+    private void finishLoading() {
         ProgressBar bar = findViewById(R.id.loginProgressBar);
         bar.setVisibility(View.GONE);
     }
@@ -71,30 +66,21 @@ public class MainActivity extends AppCompatActivity {
         finishLoading();
     }
 
-    private void login(){
+    private void switchToTrackingActivity() {
+        Intent intent = new Intent(this, TrackingActivity.class);
+        startActivity(intent);
+        finish();
+    }
+
+    private void login() {
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         finishLoading();
                         if (task.isSuccessful()) {
-                            System.out.println(mAuth.getUid());
-                            mDatabase.child("Peeps").child(mAuth.getUid()).addValueEventListener(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                                    user = dataSnapshot.getValue(User.class);
-                                    System.out.println(mAuth.getUid());
-
-                                    StorageReference riversRef = mStorageRef.child(mAuth.getUid());
-                                }
-
-                                @Override
-                                public void onCancelled(@NonNull DatabaseError databaseError) {
-                                    displayErrorMessage("Connection Error");
-                                }
-                            });
-                        } else{
+                            switchToTrackingActivity();
+                        } else {
                             displayErrorMessage("Incorrect Username or Password");
                         }
                     }
