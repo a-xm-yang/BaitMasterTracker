@@ -69,6 +69,7 @@ public class User {
 
     public List<LocationTime> getAllLocationTime(){
         ArrayList<LocationTime> list = new ArrayList<>(Location.values());
+        System.out.println("H:" + list);
         return list;
     }
 }
