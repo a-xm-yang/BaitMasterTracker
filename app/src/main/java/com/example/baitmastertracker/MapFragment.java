@@ -1,5 +1,6 @@
 package com.example.baitmastertracker;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +18,8 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,13 +50,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
     public void showLocations() {
 
-        if (gMap == null){
+        if (gMap == null) {
             return;
         }
 
         for (LocationTime lt : user.getAllLocationTime()) {
 
-            if (alreadyAdded.contains(lt)){
+            if (alreadyAdded.contains(lt)) {
                 continue;
             }
 
@@ -63,13 +66,28 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
             gMap.addMarker(new MarkerOptions().position(loc).title(lt.getTime()));
             gMap.moveCamera(CameraUpdateFactory.newLatLng(loc));
         }
+
+        for (int i = 0; i < user.getAllLocationTime().size() - 1; i++) {
+            LatLng src = new LatLng(user.getAllLocationTime().get(i).getLatitude(), user.getAllLocationTime().get(i).getLongitude());
+            LatLng dest = new LatLng(user.getAllLocationTime().get(i + 1).getLatitude(), user.getAllLocationTime().get(i + 1).getLongitude());
+
+            // mMap is the Map Object
+            Polyline line = gMap.addPolyline(
+                    new PolylineOptions().add(
+                            new LatLng(src.latitude, src.longitude),
+                            new LatLng(dest.latitude, dest.longitude)
+                    ).width(4).color(Color.BLUE).geodesic(true)
+            );
+        }
+        ;
+
     }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
         gMap = googleMap;
 
-        if(user!= null){
+        if (user != null) {
             showLocations();
         }
     }
