@@ -1,6 +1,7 @@
 package com.example.baitmastertracker;
 
 import android.content.Intent;
+import android.icu.text.SimpleDateFormat;
 import android.os.Bundle;
 import android.widget.FrameLayout;
 
@@ -25,7 +26,11 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -114,6 +119,19 @@ public class TrackingActivity extends AppCompatActivity{
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 user = dataSnapshot.getValue(User.class);
+
+                Collections.sort(user.getAllLocationTime(), new Comparator<LocationTime>() {
+                    SimpleDateFormat f = new SimpleDateFormat("yyyy.MM.dd G 'at' HH:mm:ss z");
+                    @Override
+                    public int compare(LocationTime o1, LocationTime o2) {
+                        try {
+                            return f.parse(o1.getTime()).compareTo(f.parse(o2.getTime()));
+                        } catch (ParseException e) {
+                            return 0;
+                        }
+                    }
+                });
+
                 ((MapFragment)fragmentMap.get(FragmentType.MAP)).setUser(user);
                 ((ImagesFragment)fragmentMap.get(FragmentType.IMAGE)).populateFaces(user.getAllImageUrl());
                 ((SettingFragment)fragmentMap.get(FragmentType.SETTING)).setInformation(user.getEmail(), user.getPhoneNum(), user.getRecoveryNum());
