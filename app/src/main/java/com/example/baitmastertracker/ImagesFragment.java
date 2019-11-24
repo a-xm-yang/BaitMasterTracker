@@ -1,12 +1,14 @@
 package com.example.baitmastertracker;
 
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -53,6 +55,11 @@ public class ImagesFragment extends Fragment {
             faces.add(image);
             Glide.with(this).load(endpoint).into(image);
             linear.addView(image);
+
+            TextView textView = new TextView(this.getActivity());
+            textView.setGravity(Gravity.CENTER_HORIZONTAL);
+            textView.setText(s.substring(0, s.length() - 4));
+            linear.addView(textView);
         }
 
         scroll.addView(linear);
