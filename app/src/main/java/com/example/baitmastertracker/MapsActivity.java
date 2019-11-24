@@ -3,6 +3,7 @@ package com.example.baitmastertracker;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
 
+import android.graphics.Color;
 import android.os.Bundle;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -11,6 +12,8 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -73,7 +76,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             LatLng loc = new LatLng(lt.getLatitude(), lt.getLongitude());
             mMap.addMarker(new MarkerOptions().position(loc).title(lt.getTime()));
             mMap.moveCamera(CameraUpdateFactory.newLatLng(loc));
-        }
+            }
+        for (int i = 0; i < locationTimes.size() - 1; i++) {
+            LatLng src = new LatLng(locationTimes.get(i).getLatitude(), locationTimes.get(i).getLongitude());
+            LatLng dest = new LatLng(locationTimes.get(i+1).getLatitude(), locationTimes.get(i+1).getLongitude());
+
+            // mMap is the Map Object
+            Polyline line = mMap.addPolyline(
+                    new PolylineOptions().add(
+                            new LatLng(src.latitude, src.longitude),
+                            new LatLng(dest.latitude,dest.longitude)
+                    ).width(4).color(Color.BLUE).geodesic(true)
+            );
+        };
     }
 
 
