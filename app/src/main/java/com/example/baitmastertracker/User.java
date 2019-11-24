@@ -63,11 +63,21 @@ public class User {
     }
 
     public List<String> getAllImageUrl(){
+
+        if (Img == null){
+            Img = new HashMap<>();
+        }
+
         ArrayList<String> list = new ArrayList<>(Img.values());
         return list;
     }
 
     public List<LocationTime> getAllLocationTime(){
+
+        if(Location == null){
+            Location = new HashMap<>();
+        }
+
         ArrayList<LocationTime> list = new ArrayList<>(Location.values());
         System.out.println("H:" + list);
         return list;
