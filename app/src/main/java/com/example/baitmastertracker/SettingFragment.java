@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -31,5 +32,15 @@ public class SettingFragment extends Fragment {
                 ((TrackingActivity)getActivity()).logOut();
             }
         });
+    }
+
+    public void setInformation(String email, String contact, String backUpContact){
+        TextView emailView = rootView.findViewById(R.id.email);
+        TextView contactView = rootView.findViewById(R.id.lostContact);
+        TextView backupView = rootView.findViewById(R.id.backUpContact);
+
+        emailView.setText(email);
+        contactView.setText(contact);
+        backupView.setText(backUpContact);
     }
 }

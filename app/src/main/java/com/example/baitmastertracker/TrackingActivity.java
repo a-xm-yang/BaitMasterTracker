@@ -116,6 +116,7 @@ public class TrackingActivity extends AppCompatActivity{
                 user = dataSnapshot.getValue(User.class);
                 ((MapFragment)fragmentMap.get(FragmentType.MAP)).setUser(user);
                 ((ImagesFragment)fragmentMap.get(FragmentType.IMAGE)).populateFaces(user.getAllImageUrl());
+                ((SettingFragment)fragmentMap.get(FragmentType.SETTING)).setInformation(user.getEmail(), user.getPhoneNum(), user.getRecoveryNum());
             }
 
             @Override

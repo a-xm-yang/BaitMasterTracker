@@ -45,7 +45,7 @@ public class ImagesFragment extends Fragment {
 
         mAuth = FirebaseAuth.getInstance();
         linear = new LinearLayout(this.getActivity());
-        linear.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+        linear.setOrientation(LinearLayout.VERTICAL);
 
         for (String s: urls) {
             StorageReference endpoint = ref.child(mAuth.getUid()).child(s);
