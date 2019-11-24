@@ -79,8 +79,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                     ).width(4).color(Color.BLUE).geodesic(true)
             );
         }
-        ;
-
     }
 
     @Override

@@ -9,6 +9,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -74,12 +75,24 @@ public class TrackingActivity extends AppCompatActivity{
 
         fragmentMap.put(FragmentType.SETTING, new SettingFragment());
         fragmentMap.put(FragmentType.MAP, new MapFragment());
+        fragmentMap.put(FragmentType.IMAGE, new ImagesFragment());
 
-        switchFragment(FragmentType.MAP);
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        for (FragmentType type : fragmentMap.keySet()) {
+            ft.add(R.id.fragmentContainer, fragmentMap.get(type), type.name());
+            ft.hide(fragmentMap.get((type)));
+        }
+        ft.show(fragmentMap.get(FragmentType.MAP));
+        ft.commit();
+        currentFragment = FragmentType.MAP;
     }
 
     public void switchFragment(FragmentType type) {
-        getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, fragmentMap.get(type)).commit();
+
+        getSupportFragmentManager().beginTransaction()
+                .hide(fragmentMap.get(currentFragment))
+                .show(fragmentMap.get(type))
+                .commit();
         currentFragment = type;
 
         switch (type) {
@@ -102,6 +115,7 @@ public class TrackingActivity extends AppCompatActivity{
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 user = dataSnapshot.getValue(User.class);
                 ((MapFragment)fragmentMap.get(FragmentType.MAP)).setUser(user);
+                ((ImagesFragment)fragmentMap.get(FragmentType.IMAGE)).populateFaces(user.getAllImageUrl());
             }
 
             @Override
@@ -113,7 +127,19 @@ public class TrackingActivity extends AppCompatActivity{
     private TabLayout.OnTabSelectedListener tabListener = new TabLayout.OnTabSelectedListener() {
         @Override
         public void onTabSelected(TabLayout.Tab tab) {
-            //do something
+            int num = tab.getPosition();
+
+            switch(num){
+                case 0:
+                    switchFragment(FragmentType.MAP);
+                    break;
+                case 1:
+                    switchFragment(FragmentType.IMAGE);
+                    break;
+                case 2:
+                    switchFragment(FragmentType.SETTING);
+                    break;
+            }
         }
 
         @Override

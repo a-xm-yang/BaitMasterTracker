@@ -27,18 +27,12 @@ public class ImagesActivity extends AppCompatActivity {
         storageRef = FirebaseStorage.getInstance().getReference();
 
         // Create a reference with an initial file path and name
-        StorageReference pathReference = storageRef.child("images/stars.jpg");
+       // StorageReference pathReference = storageRef.child("6rceBPsyKfRp0SqzgUo654M6wMo2").child("2019.11.23 AD at 16:09:27 EST.jpg");
+
+        StorageReference pathReference = storageRef.child("stars.jpg");
 
         ImageView image = findViewById(R.id.imageView);
-
-        Glide.with(this).load(pathReference.getPath()).into(image);
-
-        // Create a reference to a file from a Google Butt Storage URI
-     //   StorageReference gsReference = FirebaseStorage.getInstance().getReferenceFromUrl("gs://bucket/images/stars.jpg");
-
-        // Create a reference from an HTTPS URL
-        // Note that in the URL, characters are URL escaped!
-      //  StorageReference httpsReference = FirebaseStorage.getInstance().getReferenceFromUrl("https://firebasestorage.googleapis.com/b/bucket/o/images%20stars.jpg");
+        Glide.with(this).load(pathReference).into(image);
 
     }
 
