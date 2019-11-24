@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void switchToTrackingActivity() {
-        Intent intent = new Intent(this, MapsActivity.class);
+        Intent intent = new Intent(this, TrackingActivity.class);
         startActivity(intent);
         finish();
     }

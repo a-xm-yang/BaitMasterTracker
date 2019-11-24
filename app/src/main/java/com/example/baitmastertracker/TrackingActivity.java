@@ -7,8 +7,15 @@ import android.widget.FrameLayout;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -17,10 +24,12 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-public class TrackingActivity extends AppCompatActivity {
+public class TrackingActivity extends AppCompatActivity{
 
     User user;
     FirebaseAuth mAuth;
@@ -28,7 +37,12 @@ public class TrackingActivity extends AppCompatActivity {
 
     Map<FragmentType, Fragment> fragmentMap;
     FragmentType currentFragment;
-    enum FragmentType{IMAGE, MAP, SETTING}
+
+    Toolbar toolbar;
+
+    enum FragmentType {IMAGE, MAP, SETTING}
+
+    GoogleMap map;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -38,11 +52,12 @@ public class TrackingActivity extends AppCompatActivity {
         TabLayout tab = findViewById(R.id.tab);
         tab.addOnTabSelectedListener(tabListener);
 
+        toolbar = findViewById(R.id.toolbar);
+
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance().getReference();
 
         initializeFragmentMap();
-
         loadUser();
     }
 
@@ -54,19 +69,39 @@ public class TrackingActivity extends AppCompatActivity {
         super.onDestroy();
     }
 
-    private void initializeFragmentMap(){
+    private void initializeFragmentMap() {
         fragmentMap = new HashMap<>();
 
-        // put stuff
+        fragmentMap.put(FragmentType.SETTING, new SettingFragment());
+        fragmentMap.put(FragmentType.MAP, new MapFragment());
+
+        switchFragment(FragmentType.MAP);
     }
 
-    private void loadUser(){
+    public void switchFragment(FragmentType type) {
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainer, fragmentMap.get(type)).commit();
+        currentFragment = type;
+
+        switch (type) {
+            case MAP:
+                toolbar.setTitle("LOCATION TRACKING");
+                break;
+            case SETTING:
+                toolbar.setTitle("ACCOUNT");
+                break;
+            case IMAGE:
+                toolbar.setTitle("VIEW PICTURES");
+                break;
+        }
+    }
+
+    private void loadUser() {
         System.out.println(mAuth.getUid());
         mDatabase.child("Peeps").child(mAuth.getUid()).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 user = dataSnapshot.getValue(User.class);
-                System.out.println(mAuth.getUid());
+                ((MapFragment)fragmentMap.get(FragmentType.MAP)).setUser(user);
             }
 
             @Override
@@ -92,7 +127,7 @@ public class TrackingActivity extends AppCompatActivity {
         }
     };
 
-    public void logOut(){
+    public void logOut() {
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
 
